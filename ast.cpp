@@ -69,10 +69,21 @@ VarDec::VarDec() {}
 VarDec::~VarDec() {}
 
 Body::Body(){
-    declarations=list<VarDec*>();
-    StmList=list<Stm*>();
+    sdlist = list<StructDec*>();
+    fdlist = list<FunDec*>();
+    vdlist = list<VarDec*>();
 }
 
 Body::~Body(){}
 
+StructDec::StructDec() {
+    campos = new StructField();
+}
 
+StructDec::~StructDec() {}
+
+StructField::StructField() {
+    tipo = list<string>();
+    nombre = list<string>();
+}
+StructField::~StructField() {}

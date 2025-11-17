@@ -23,7 +23,6 @@ public:
         ID,      // ID
         LE,
         FUN,
-        ENDFUN,
         RETURN,
         SEMICOL,    
         ASSIGN,
@@ -31,15 +30,27 @@ public:
         IF,
         WHILE,
         DO,
-        THEN,
-        ENDIF,
-        ENDWHILE,
         ELSE,
         END,      // Fin de entrada
         VAR,
         COMA,
         TRUE,
-        FALSE
+        STRUCT,
+        FALSE,
+        GT,
+        QUESTION,
+        DOSPUNTOS,
+        LLAVEL,
+        LLAVER,
+        CORL,
+        CORR,
+        PUNTO,
+        COMA,
+        EQUAL,
+        NEQUAL,
+        AND,
+        OR,
+        NOT
     };
 
     // Atributos

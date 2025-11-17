@@ -57,23 +57,22 @@ Token* Scanner::nextToken() {
         else if (lexema=="print") return new Token(Token::PRINT, input, first, current - first);
         else if (lexema=="if") return new Token(Token::IF, input, first, current - first);
         else if (lexema=="while") return new Token(Token::WHILE, input, first, current - first);
-        else if (lexema=="then") return new Token(Token::THEN, input, first, current - first);
         else if (lexema=="do") return new Token(Token::DO, input, first, current - first);
-        else if (lexema=="endif") return new Token(Token::ENDIF, input, first, current - first);
-        else if (lexema=="endwhile") return new Token(Token::ENDWHILE, input, first, current - first);
         else if (lexema=="else") return new Token(Token::ELSE, input, first, current - first);
         else if (lexema=="var") return new Token(Token::VAR, input, first, current - first);
         else if (lexema=="true") return new Token(Token::TRUE, input, first, current - first);
         else if (lexema=="false") return new Token(Token::FALSE, input, first, current - first);
 
         else if (lexema=="fun") return new Token(Token::FUN, input, first, current - first);
-        else if (lexema=="endfun") return new Token(Token::ENDFUN, input, first, current - first);
         else if (lexema=="return") return new Token(Token::RETURN, input, first, current - first);
-
+        else if (lexema=="struct") return new Token(Token::STRUCT, input, first, current - first);
+        else if (lexema=="and") return new Token(Token::AND, input, first, current - first);
+        else if (lexema=="or") return new Token(Token::OR, input, first, current - first);
+        else if (lexema=="not") return new Token(Token::NOT, input, first, current - first);
         else return new Token(Token::ID, input, first, current - first);
     }
     // Operadores
-    else if (strchr("+/-*();=<,", c)) {
+    else if (strchr("+/-*();=<>,{}[].?!", c)) {
         switch (c) {
             case '<': token = new Token(Token::LE,  c); break;
             case '+': token = new Token(Token::PLUS,  c); break;
@@ -91,10 +90,32 @@ Token* Scanner::nextToken() {
             case '/': token = new Token(Token::DIV,   c); break;
             case '(': token = new Token(Token::LPAREN,c); break;
             case ')': token = new Token(Token::RPAREN,c); break;
-            case '=': token = new Token(Token::ASSIGN,c); break;
+            case '=':
+                if (input[current+1]=='=') {
+                    current++;
+                    token = new Token(Token::EQUAL, input, first, current + 1 - first);
+                } else {
+                    token = new Token(Token::ASSIGN,c);
+                }
+                break;
             case ';': token = new Token(Token::SEMICOL,c); break;
             case ',': token = new Token(Token::COMA,c); break;
-
+            case '>': token = new Token(Token::GT,c); break;
+            case '?': token = new Token(Token::QUESTION,c); break;
+            case ':': token = new Token(Token::DOSPUNTOS,c); break;
+            case '{': token = new Token(Token::LLAVEL,c); break;
+            case '}': token = new Token(Token::LLAVER,c); break;
+            case '[': token = new Token(Token::CORL,c); break;
+            case ']': token = new Token(Token::CORR,c); break;
+            case '.': token = new Token(Token::PUNTO,c); break;
+            case '!':
+                if (input[current+1]=='=') {
+                    current++;
+                    token = new Token(Token::NEQUAL, input, first, current + 1 - first);
+                } else {
+                    token = new Token(Token::NOT,c);
+                }
+                break;
         }
         current++;
     }

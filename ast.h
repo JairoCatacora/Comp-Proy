@@ -17,7 +17,8 @@ enum BinaryOp {
     MUL_OP, 
     DIV_OP,
     POW_OP,
-    LE_OP
+    LE_OP,
+    GT_OP,
 };
 
 // Clase abstracta Exp
@@ -77,8 +78,9 @@ public:
 
 class Body{
 public:
-    list<Stm*> StmList;
-    list<VarDec*> declarations;
+    list<StructDec*> sdlist;
+    list<FunDec*> fdlist;
+    list<VarDec*> vdlist;
     int accept(Visitor* visitor);
     Body();
     ~Body();
@@ -162,10 +164,36 @@ public:
     ~FunDec(){};
 };
 
+class StructField {
+    public:
+        list<string> tipo;
+        list<string> nombre;
+        StructField();
+        ~StructField();
+        int accept(Visitor* visitor);
+};
+
+class StructDec {
+    public:
+        string nombre;
+        StructField* campos;
+        StructDec();
+        ~StructDec();
+        int accept(Visitor* visitor);
+};
+
+class Block {
+public:
+    list<Stm*> StmtList;
+    list<VarDec*> vdlist;
+    int accept(Visitor* visitor);
+    Block();
+    ~Block();
+};
+
 class Program{
 public:
-    list<VarDec*> vdlist;
-    list<FunDec*> fdlist;
+    Body* cuerpo;    
     Program(){};
     ~Program(){};
     int accept(Visitor* visitor);
