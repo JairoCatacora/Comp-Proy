@@ -21,7 +21,7 @@ input_dir = "inputs"
 output_dir = "outputs"
 os.makedirs(output_dir, exist_ok=True)
 
-for i in range(1, 15):
+for i in range(1, 6):
     filename = f"input{i}.txt"
     filepath = os.path.join(input_dir, filename)
 
@@ -30,6 +30,12 @@ for i in range(1, 15):
         run_cmd = ["./a.out", filepath]
         result = subprocess.run(run_cmd, capture_output=True, text=True)
 
+        output_file = os.path.join(output_dir, f"output{i}.txt")
+        with open(output_file, "w", encoding="utf-8") as f:
+            f.write("=== STDOUT ===\n")
+            f.write(result.stdout)
+            f.write("\n=== STDERR ===\n")
+            f.write(result.stderr)
         
         # Archivos generados
         tokens_file = os.path.join(input_dir, f"input{i}.s")  # se crea en inputs/

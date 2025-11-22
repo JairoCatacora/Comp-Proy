@@ -45,7 +45,6 @@ public:
         CORL,
         CORR,
         PUNTO,
-        COMA,
         EQUAL,
         NEQUAL,
         AND,

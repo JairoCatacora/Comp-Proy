@@ -44,19 +44,83 @@ int Body::accept(Visitor* visitor){
     return visitor->visit(this);
 }
 
-int VarDec::accept(Visitor* visitor){
-    return visitor->visit(this);
-}
-
 int FcallExp::accept(Visitor* visitor) {
     return visitor->visit(this);
 }
 
-int FunDec::accept(Visitor* visitor){
+int ReturnStm::accept(Visitor* visitor){
     return visitor->visit(this);
 }
 
-int ReturnStm::accept(Visitor* visitor){
+int CondExp::accept(Visitor* visitor) {
+    return visitor->visit(this);
+}
+
+int StringExp::accept(Visitor* visitor) {
+    return visitor->visit(this);
+}
+
+int CharExp::accept(Visitor* visitor) {
+    return visitor->visit(this);
+}
+
+int BoolExp::accept(Visitor* visitor) {
+    return visitor->visit(this);
+}
+
+int ArrayLiteral::accept(Visitor* visitor) {
+    return visitor->visit(this);
+}
+
+int LValueSuffix::accept(Visitor* visitor) {
+    return visitor->visit(this);
+}
+
+int LValue::accept(Visitor* visitor) {
+    return visitor->visit(this);
+}
+
+int ArraySuffix::accept(Visitor* visitor) {
+    return visitor->visit(this);
+}
+
+int Param::accept(Visitor* visitor) {
+    return visitor->visit(this);
+}
+
+int Initializer::accept(Visitor* visitor) {
+    return visitor->visit(this);
+}
+
+int Declarator::accept(Visitor* visitor) {
+    return visitor->visit(this);
+}
+
+int FunDec::accept(Visitor* visitor) {
+    return visitor->visit(this);
+}
+
+int Decl::accept(Visitor* visitor) {
+    return visitor->visit(this);
+}
+
+int FieldDeclarator::accept(Visitor* visitor) {
+    return visitor->visit(this);
+}
+
+int StructField::accept(Visitor* visitor) {
+    return visitor->visit(this);
+}
+
+int StructDec::accept(Visitor* visitor) {
+    return visitor->visit(this);
+}
+
+int Block::accept(Visitor* visitor) {
+    return visitor->visit(this);
+}
+
+int Dec::accept(Visitor* visitor) {
     return visitor->visit(this);
 }
 
@@ -69,36 +133,11 @@ int GenCodeVisitor::generar(Program* program) {
 }
 
 int GenCodeVisitor::visit(Program* program) {
-out << ".data\nprint_fmt: .string \"%ld \\n\""<<endl;
-
-    for (auto dec : program->vdlist){
-        dec->accept(this);
-    }
-
-    for (auto& [var, _] : memoriaGlobal) {
-        out << var << ": .quad 0"<<endl;
-    }
-
-    out << ".text\n";
-    
-    for (auto dec : program->fdlist){
-        dec->accept(this);
-    }
-
-    out << ".section .note.GNU-stack,\"\",@progbits"<<endl;
-        return 0;
-}
-
-int GenCodeVisitor::visit(VarDec* stm) {
-    for (auto var : stm->vars) {
-        if (!entornoFuncion) {
-            memoriaGlobal[var] = true;
-        } else {
-            memoria[var] = offset;
-            offset -= 8;
-        }
-    }
-        return 0;
+    out << ".section .data\n";
+    out << "print_fmt: .asciz \"%d\\n\"\n";
+    out << ".section .text\n";
+    program->cuerpo->accept(this);
+    return 0;
 }
 
 
@@ -138,12 +177,19 @@ int GenCodeVisitor::visit(BinaryExp* exp) {
 
 
 int GenCodeVisitor::visit(AssignStm* stm) {
-    stm->e->accept(this);
-    if (memoriaGlobal.count(stm->id))
-        out << " movq %rax, " << stm->id << "(%rip)"<<endl;
-    else
-        out << " movq %rax, " << memoria[stm->id] << "(%rbp)"<<endl;
-            return 0;
+    // Evaluar el lado derecho
+    stm->rvalue->accept(this);
+    out << " pushq %rax\n";
+    
+    // Guardar en el lado izquierdo (por ahora solo variables simples)
+    if (memoriaGlobal.count(stm->lvalue->id)) {
+        out << " popq %rax\n";
+        out << " movq %rax, " << stm->lvalue->id << "(%rip)\n";
+    } else if (memoria.count(stm->lvalue->id)) {
+        out << " popq %rax\n";
+        out << " movq %rax, " << memoria[stm->lvalue->id] << "(%rbp)\n";
+    }
+    return 0;
 }
 
 int GenCodeVisitor::visit(PrintStm* stm) {
@@ -159,13 +205,10 @@ int GenCodeVisitor::visit(PrintStm* stm) {
 
 
 int GenCodeVisitor::visit(Body* b) {
-    for (auto dec : b->declarations){
+    for (auto dec : b->decList){
         dec->accept(this);
     }
-    for (auto s : b->StmList){
-        s->accept(this);
-    }
-        return 0;
+    return 0;
 }
 
 int GenCodeVisitor::visit(IfStm* stm) {
@@ -173,7 +216,7 @@ int GenCodeVisitor::visit(IfStm* stm) {
     stm->condition->accept(this);
     out << " cmpq $0, %rax"<<endl;
     out << " je else_" << label << endl;
-   stm->then->accept(this);
+    stm->then->accept(this);
     out << " jmp endif_" << label << endl;
     out << " else_" << label << ":"<< endl;
     if (stm->els) stm->els->accept(this);
@@ -200,37 +243,6 @@ int GenCodeVisitor::visit(ReturnStm* stm) {
     return 0;
 }
 
-int GenCodeVisitor::visit(FunDec* f) {
-    entornoFuncion = true;
-    memoria.clear();
-    offset = -8;
-    nombreFuncion = f->nombre;
-    vector<std::string> argRegs = {"%rdi", "%rsi", "%rdx", "%rcx", "%r8", "%r9"};
-    out << ".globl " << f->nombre << endl;
-    out << f->nombre <<  ":" << endl;
-    out << " pushq %rbp" << endl;
-    out << " movq %rsp, %rbp" << endl;
-    int size = f->Pnombres.size();
-    for (int i = 0; i < size; i++) {
-        memoria[f->Pnombres[i]]=offset;
-        out << " movq " << argRegs[i] << "," << offset << "(%rbp)" << endl;
-        offset -= 8;
-    }
-    for (auto i: f->cuerpo->declarations){
-        i->accept(this);
-    }
-    int reserva = -offset - 8;
-    out << " subq $" << reserva << ", %rsp" << endl;
-    for (auto i: f->cuerpo->StmList){
-        i->accept(this);
-    }
-    out << ".end_"<< f->nombre << ":"<< endl;
-    out << "leave" << endl;
-    out << "ret" << endl;
-    entornoFuncion = false;
-    return 0;
-}
-
 int GenCodeVisitor::visit(FcallExp* exp) {
     vector<std::string> argRegs = {"%rdi", "%rsi", "%rdx", "%rcx", "%r8", "%r9"};
     int size = exp->argumentos.size();
@@ -239,5 +251,158 @@ int GenCodeVisitor::visit(FcallExp* exp) {
         out << " mov %rax, " << argRegs[i] <<endl;
     }
     out << "call " << exp->nombre << endl;
+    return 0;
+}
+
+int GenCodeVisitor::visit(CondExp* exp) {
+    return 0;
+}
+
+int GenCodeVisitor::visit(StringExp* exp) {
+    return 0;
+}
+
+int GenCodeVisitor::visit(CharExp* exp) {
+    return 0;
+}
+
+int GenCodeVisitor::visit(BoolExp* exp) {
+    return 0;
+}
+
+int GenCodeVisitor::visit(ArrayLiteral* exp) {
+    return 0;
+}
+
+int GenCodeVisitor::visit(LValueSuffix* s) {
+    return 0;
+}
+
+int GenCodeVisitor::visit(LValue* lv) {
+    // Por ahora solo soportamos variables simples sin sufijos
+    if (memoriaGlobal.count(lv->id)) {
+        out << " movq " << lv->id << "(%rip), %rax\n";
+    } else if (memoria.count(lv->id)) {
+        out << " movq " << memoria[lv->id] << "(%rbp), %rax\n";
+    }
+    return 0;
+}
+
+int GenCodeVisitor::visit(ArraySuffix* s) {
+    return 0;
+}
+
+int GenCodeVisitor::visit(Param* param) {
+    return 0;
+}
+
+int GenCodeVisitor::visit(Initializer* i) {
+    if (i->value) {
+        i->value->accept(this);
+    }
+    return 0;
+}
+
+int GenCodeVisitor::visit(Declarator* decl) {
+    return 0;
+}
+
+int GenCodeVisitor::visit(FunDec* fd) {
+    nombreFuncion = fd->nombre;
+    entornoFuncion = true;
+    
+    out << "\n.globl " << fd->nombre << "\n";
+    out << fd->nombre << ":\n";
+    out << " pushq %rbp\n";
+    out << " movq %rsp, %rbp\n";
+    
+    // Procesar parámetros
+    vector<string> argRegs = {"%rdi", "%rsi", "%rdx", "%rcx", "%r8", "%r9"};
+    for (size_t i = 0; i < fd->params.size() && i < argRegs.size(); i++) {
+        memoria[fd->params[i]->id] = offset;
+        out << " movq " << argRegs[i] << ", " << offset << "(%rbp)\n";
+        offset -= 8;
+    }
+    
+    // Generar cuerpo de la función
+    if (fd->body) {
+        fd->body->accept(this);
+    }
+    
+    out << ".end_" << fd->nombre << ":\n";
+    out << " movq %rbp, %rsp\n";
+    out << " popq %rbp\n";
+    out << " ret\n";
+    
+    entornoFuncion = false;
+    offset = -8;
+    memoria.clear();
+    
+    return 0;
+}
+
+int GenCodeVisitor::visit(Decl* decl) {
+    // Procesar cada declarador
+    for (auto declarator : decl->declarators) {
+        if (entornoFuncion) {
+            // Variable local
+            memoria[declarator->id] = offset;
+            offset -= 8;
+            
+            // Si tiene inicializador
+            if (declarator->init) {
+                declarator->init->accept(this);
+                out << " movq %rax, " << memoria[declarator->id] << "(%rbp)\n";
+            }
+        } else {
+            // Variable global
+            memoriaGlobal[declarator->id] = true;
+            out << ".section .data\n";
+            out << declarator->id << ": .quad 0\n";
+            out << ".section .text\n";
+        }
+    }
+    return 0;
+}
+
+int GenCodeVisitor::visit(FieldDeclarator* fdecl) {
+    return 0;
+}
+
+int GenCodeVisitor::visit(StructField* sfield) {
+    return 0;
+}
+
+int GenCodeVisitor::visit(StructDec* sdec) {
+    return 0;
+}
+
+int GenCodeVisitor::visit(Block* b) {
+    // Procesar declaraciones
+    for (auto decl : b->declarations) {
+        decl->accept(this);
+    }
+    // Procesar sentencias
+    for (auto stmt : b->statements) {
+        stmt->accept(this);
+    }
+    return 0;
+}
+
+int GenCodeVisitor::visit(Dec* d) {
+    switch (d->type) {
+        case Dec::STRUCT_DECL:
+            if (d->structDec) d->structDec->accept(this);
+            break;
+        case Dec::FUNC_DEF:
+            if (d->funDec) d->funDec->accept(this);
+            break;
+        case Dec::DECL:
+            if (d->decl) d->decl->accept(this);
+            break;
+        case Dec::STMT:
+            if (d->stmt) d->stmt->accept(this);
+            break;
+    }
     return 0;
 }

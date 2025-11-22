@@ -1,10 +1,16 @@
-var int x;
-fun int suma(int a, int b)
-    var int y;
-    y = a + b;
-    return(y)
-endfun
-fun int main()
-    print(suma(2,3));
-    return(0)
-endfun
+struct Persona {
+    int  edad;
+    char nombre[16];
+};
+
+Persona crearPersona(char[] nombre, int edad) {
+    Persona p;
+    p.edad = edad;
+    int i = 0;
+    while (i < 10) {
+        p.nombre[i] = nombre[i];
+        i = i + 1;
+    }
+    p.nombre[i] = 0;
+    return p;
+}

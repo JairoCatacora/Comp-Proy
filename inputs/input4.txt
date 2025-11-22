@@ -1,9 +1,25 @@
-fun int main()
-    var int i;
-    i = 0;
-    while i < 3 do
-        print(i);
-        i = i + 1
-    endwhile
-    return(0)
-endfun
+struct Persona {
+    int  edad;
+    char nombre[16];
+};
+
+Persona crearPersona(char[] nombre, int edad) {
+    Persona p;
+    p.edad = edad;
+    int i = 0;
+    while (i < 10) {
+        p.nombre[i] = nombre[i];
+        i = i + 1;
+    }
+    p.nombre[i] = 0;
+    return p;
+}
+
+int main() {    
+    Persona p;
+    p = crearPersona("Ana", 21);
+    print(p.nombre);
+    print(p.edad);
+    p.edad = p.edad + 1;
+    print(p.edad);
+}

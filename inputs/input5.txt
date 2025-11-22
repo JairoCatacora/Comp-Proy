@@ -1,8 +1,18 @@
-fun int id(int x)
-    return(x)
-endfun
+int sumArray(int[] a, int n) {
+    int i = 0;
+    int s = 0;
+    while (i < n) {
+        s = s + a[i];
+        i = i + 1;
+    }
+    return s;
+}
 
-fun int main()
-    print(id(42));
-    return(0)
-endfun
+in main() {
+    int nums[] = {10, 20, 30, 40};
+    int total;
+    total = sumArray(nums, 4);
+    print(total);
+    nums[0] = nums[1] + 5;
+    print(nums[0]);
+}

@@ -15,15 +15,34 @@ private:
 public:
     Parser(Scanner* scanner);       
     Program* parseProgram();
-    FunDec* parseFunDec();
     Body* parseBody();
-    VarDec* parseVarDec();
+    Dec* parseDec();
+    StructDec* parseStructDec();
+    StructField* parseStructField();
+    FieldDeclarator* parseFieldDeclarator();
+    Decl* parseDecl();
+    Declarator* parseDeclarator();
+    vector<ArraySuffix*> parseArraySuffixList();
+    ArraySuffix* parseArraySuffix();
+    Initializer* parseInit();
+    Exp* parseInitializer();
+    FunDec* parseFunDec();
+    Param* parseParam();
+    Block* parseFuncBody();
+    Block* parseBlock();
     Stm* parseStm();
+    AssignStm* parseAssignStmt();
+    ReturnStm* parseReturnStmt();
+    LValue* parseLValue();
+    LValueSuffix* parseLValueSuffix();
+    Exp* parseCEondExp();
     Exp* parseCE();
     Exp* parseBE();
     Exp* parseE();
     Exp* parseT();
     Exp* parseF();
+    ArrayLiteral* parseArrayLiteral();
+    string parseType();
 };
 
 #endif // PARSER_H      

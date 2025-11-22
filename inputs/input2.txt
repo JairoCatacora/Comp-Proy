@@ -1,8 +1,9 @@
-fun int main()
-    var int a;
-    a = 10;
-    if a < 20 then
-        print(a)
-    endif
-    return(0)
-endfun
+int sumArray(int[] a, int n) {
+    int i = 0;
+    int s = 0;
+    while i < n do {
+        s = s + a[i];
+        i = i + 1;
+    } endwhile
+    return s;
+}
