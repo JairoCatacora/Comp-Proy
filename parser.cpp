@@ -270,12 +270,12 @@ Exp* Parser::parseInitializer() {
 
 Param* Parser::parseParam() {
     string type = parseType();
+    string name = current->text;
+    advance();
     vector<ArraySuffix*> arraySuffixes;
     while (check(Token::CORL)) {
         arraySuffixes.push_back(parseArraySuffix());
     }
-    string name = current->text;
-    advance();
     Param* param = new Param(type, name);
     param->arraySuffixes = arraySuffixes;
     return param;
@@ -290,31 +290,29 @@ Block* Parser::parseFuncBody() {
 
 Block* Parser::parseBlock() {
     Block* block = new Block();
-    while (check(Token::ID)) {
-        Token* saved = current;
+    while (check(Token::ID) && !isAtEnd() && !check(Token::LLAVER)) {
+        Token* savedCurrent = current;
+        Token* savedPrevious = previous;
         string possibleType = current->text;
         advance();
         if (check(Token::ID) || check(Token::COMA) || check(Token::CORL)) {
-            delete previous;
-            previous = nullptr;
-            current = saved;
-            
+            current = savedCurrent;
+            previous = savedPrevious;
             block->declarations.push_back(parseDecl());
         } else {
-            delete previous;
-            previous = nullptr;
-            current = saved;
+            current = savedCurrent;
+            previous = savedPrevious;
             break;
         }
     }
-    if (!check(Token::LLAVER) && !isAtEnd()) {
+    
+    while (!check(Token::LLAVER) && !isAtEnd()) {
         block->statements.push_back(parseStm());
-        while (match(Token::SEMICOL)) {
-            if (!check(Token::LLAVER) && !isAtEnd()) {
-                block->statements.push_back(parseStm());
-            }
+        if (!match(Token::SEMICOL)) {
+            break;
         }
     }
+    
     return block;
 }
 

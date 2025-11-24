@@ -1,18 +1,42 @@
-int sumArray(int[] a, int n) {
-    int i = 0;
-    int s = 0;
+struct Student {
+    int id;
+    int grades[3];
+};
+
+int average(int scores[], int n) {
+    int sum;
+    int i;
+    sum = 0;
+    i = 0;
     while (i < n) {
-        s = s + a[i];
+        sum = sum + scores[i];
         i = i + 1;
     }
-    return s;
+    return sum;
 }
 
-in main() {
-    int nums[] = {10, 20, 30, 40};
-    int total;
-    total = sumArray(nums, 4);
-    print(total);
-    nums[0] = nums[1] + 5;
-    print(nums[0]);
+int main() {
+    Student st;
+    int avg;
+    char message[5];
+    st.id = 101;
+    st.grades[0] = 85;
+    st.grades[1] = 90;
+    st.grades[2] = 78;
+    avg = average(st.grades, 3);
+    print(avg);
+    if (avg > 250) {
+        message[0] = 'G';
+        message[1] = 'o';
+        message[2] = 'o';
+        message[3] = 'd';
+    } else {
+        message[0] = 'B';
+        message[1] = 'a';
+        message[2] = 'd';
+        message[3] = 0;
+    }
+    message[4] = 0;
+    print(st.id);
+    return 0;
 }
