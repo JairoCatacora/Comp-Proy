@@ -2,43 +2,36 @@
 print_fmt: .asciz "%d\n"
 .section .text
 
-.globl sumArray
-sumArray:
+.globl suma
+suma:
  pushq %rbp
  movq %rsp, %rbp
  movq %rdi, -8(%rbp)
  movq %rsi, -16(%rbp)
- movq $0, %rax
- pushq %rax
- movq $0, %rax
- pushq %rax
-while_0:
+ movq -8(%rbp), %rax
  pushq %rax
  movq -16(%rbp), %rax
  movq %rax, %rcx
  popq %rax
- cmpq %rcx, %rax
- movl $0, %eax
- setle %al
- movzbq %al, %rax
- cmpq $0, %rax
- je endwhile_0
- pushq %rax
- movq -8(%rbp), %rax
- movq %rax, %rcx
- popq %rax
  addq %rcx, %rax
- pushq %rax
- pushq %rax
- movq $1, %rax
- movq %rax, %rcx
- popq %rax
- addq %rcx, %rax
- pushq %rax
- jmp while_0
-endwhile_0:
-.end_sumArray:
+ jmp .end_suma
+.end_suma:
  movq %rbp, %rsp
  popq %rbp
  ret
- jmp .end_sumArray
+
+.globl factorial
+factorial:
+ pushq %rbp
+ movq %rsp, %rbp
+ movq %rdi, -8(%rbp)
+ movq -8(%rbp), %rax
+ cmpq $0, %rax
+ je else_0
+ jmp endif_0
+ else_0:
+endif_0:
+.end_factorial:
+ movq %rbp, %rsp
+ popq %rbp
+ ret

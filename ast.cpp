@@ -29,10 +29,10 @@ BinaryExp::~BinaryExp() {
     delete right;
 }
 
-CondExp::CondExp(Exp* cond, Exp* tExp, Exp* fExp)
+TCondExp::TCondExp(Exp* cond, Exp* tExp, Exp* fExp)
     : condition(cond), trueExp(tExp), falseExp(fExp) {}
 
-CondExp::~CondExp() {}
+TCondExp::~TCondExp() {}
 
 // ------------------ NumberExp ------------------
 NumberExp::NumberExp(int v) : value(v) {}

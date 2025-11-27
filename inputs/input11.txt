@@ -1,0 +1,16 @@
+struct Pair {
+    int x;
+    int y;
+};
+
+struct Pair makePair(int x,int y) {
+    return (struct Pair) {x,y};
+}
+
+int main() {
+    struct Pair q;
+    q = makePair(1,2);
+    print(q.x);
+    print(q.y);
+    return 0;
+}

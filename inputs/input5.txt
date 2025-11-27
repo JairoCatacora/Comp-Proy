@@ -1,42 +1,24 @@
-struct Student {
-    int id;
-    int grades[3];
-};
-
-int average(int scores[], int n) {
-    int sum;
+int countTo(int n) {
     int i;
-    sum = 0;
+    int sum;
     i = 0;
+    sum = 0;
     while (i < n) {
-        sum = sum + scores[i];
+        sum = sum + i;
         i = i + 1;
     }
     return sum;
 }
 
 int main() {
-    Student st;
-    int avg;
-    char message[5];
-    st.id = 101;
-    st.grades[0] = 85;
-    st.grades[1] = 90;
-    st.grades[2] = 78;
-    avg = average(st.grades, 3);
-    print(avg);
-    if (avg > 250) {
-        message[0] = 'G';
-        message[1] = 'o';
-        message[2] = 'o';
-        message[3] = 'd';
-    } else {
-        message[0] = 'B';
-        message[1] = 'a';
-        message[2] = 'd';
-        message[3] = 0;
-    }
-    message[4] = 0;
-    print(st.id);
+    char letters[5];
+    int result;
+    letters[0] = 'A';
+    letters[1] = 'B';
+    letters[2] = 'C';
+    letters[3] = 'D';
+    letters[4] = 'E';
+    result = countTo(10);
+    print(result);
     return 0;
 }

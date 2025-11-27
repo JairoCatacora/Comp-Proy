@@ -49,7 +49,8 @@ public:
         NEQUAL,
         AND,
         OR,
-        NOT
+        NOT,
+        CHARLIT
     };
 
     // Atributos

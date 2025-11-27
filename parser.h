@@ -22,7 +22,6 @@ public:
     FieldDeclarator* parseFieldDeclarator();
     Decl* parseDecl();
     Declarator* parseDeclarator();
-    vector<ArraySuffix*> parseArraySuffixList();
     ArraySuffix* parseArraySuffix();
     Initializer* parseInit();
     Exp* parseInitializer();
@@ -35,7 +34,7 @@ public:
     ReturnStm* parseReturnStmt();
     LValue* parseLValue();
     LValueSuffix* parseLValueSuffix();
-    Exp* parseCEondExp();
+    Exp* parseTCondExp();
     Exp* parseCE();
     Exp* parseBE();
     Exp* parseE();

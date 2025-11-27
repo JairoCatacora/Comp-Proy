@@ -71,8 +71,18 @@ Token* Scanner::nextToken() {
         else if (lexema=="not") return new Token(Token::NOT, input, first, current - first);
         else return new Token(Token::ID, input, first, current - first);
     }
-    // Operadores
-    else if (strchr("+/-*();=<>,{}[].?!", c)) {
+    else if (c == '\'') {
+        current++;
+        while (current < input.length()) {
+            if (input[current] == '\'') {
+                current++; 
+                break;
+            }
+            current++;
+        }
+        token = new Token(Token::CHARLIT, input, first, current - first);
+    }
+    else if (strchr("+/-*();=<>,{}[].?!:\'", c)) {
         switch (c) {
             case '<': token = new Token(Token::LE,  c); break;
             case '+': token = new Token(Token::PLUS,  c); break;

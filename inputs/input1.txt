@@ -1,24 +1,22 @@
-int sumArray(int a[], int n) {
-    int i;
-    int s;
-    i = 0;
-    s = 0;
-    while (i < n) {
-        s = s + a[i];
-        i = i + 1;
+int suma(int a,int b) {
+    return a + b;
+}
+
+int factorial(int n) {
+    if (n == 0) {
+        return 1;
     }
-    return s;
+    return n * factorial(n - 1);
 }
 
 int main() {
-    int nums[5];
-    int total;
-    nums[0] = 10;
-    nums[1] = 20;
-    nums[2] = 30;
-    nums[3] = 40;
-    nums[4] = 50;
-    total = sumArray(nums, 5);
-    print(total);
+    int x;
+    int y;
+    int resultado;
+    x = 5;
+    y = 3;
+    resultado = suma(x, y);
+    print(resultado);
+    print(factorial(5));
     return 0;
 }

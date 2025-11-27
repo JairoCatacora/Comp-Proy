@@ -131,24 +131,24 @@ Stm* Parser::parseStm() {
     if (check(Token::ID)) {
         LValue* lv = parseLValue();
         match(Token::ASSIGN);
-        e = parseCE();
+        e = parseTCondExp();
         return new AssignStm(lv, e);
     }
     else if(match(Token::PRINT)){
         match(Token::LPAREN);
-        e = parseCE();
+        e = parseTCondExp();
         match(Token::RPAREN);
         return new PrintStm(e);
     }
     else if(match(Token::RETURN)) {
         ReturnStm* r  = new ReturnStm();
-        r->e = parseCE();
+        r->e = parseTCondExp();
         match(Token::SEMICOL);
         return r;
     }
     else if (match(Token::IF)) {
         match(Token::LPAREN);
-        Exp* cond = parseCE();
+        Exp* cond = parseTCondExp();
         match(Token::RPAREN);
         match(Token::LLAVEL);
         Block* t = parseBlock();
@@ -161,7 +161,7 @@ Stm* Parser::parseStm() {
     }
     else if (match(Token::WHILE)) {
         match(Token::LPAREN);
-        e = parseCE();
+        e = parseTCondExp();
         match(Token::RPAREN);
         match(Token::LLAVEL);
         Block* body = parseBlock();
@@ -235,14 +235,6 @@ Declarator* Parser::parseDeclarator() {
     return declarator;
 }
 
-vector<ArraySuffix*> Parser::parseArraySuffixList() {
-    vector<ArraySuffix*> suffixes;    
-    do {
-        suffixes.push_back(parseArraySuffix());
-    } while (check(Token::CORL));
-    return suffixes;
-}
-
 ArraySuffix* Parser::parseArraySuffix() {
     match(Token::CORL);
     if (check(Token::CORR)) {
@@ -290,25 +282,28 @@ Block* Parser::parseFuncBody() {
 
 Block* Parser::parseBlock() {
     Block* block = new Block();
-    while (check(Token::ID) && !isAtEnd() && !check(Token::LLAVER)) {
-        Token* savedCurrent = current;
-        Token* savedPrevious = previous;
-        string possibleType = current->text;
-        advance();
-        if (check(Token::ID) || check(Token::COMA) || check(Token::CORL)) {
-            current = savedCurrent;
-            previous = savedPrevious;
-            block->declarations.push_back(parseDecl());
-        } else {
-            current = savedCurrent;
-            previous = savedPrevious;
-            break;
-        }
-    }
-    
     while (!check(Token::LLAVER) && !isAtEnd()) {
-        block->statements.push_back(parseStm());
-        if (!match(Token::SEMICOL)) {
+        if (check(Token::PRINT) || check(Token::IF) || 
+            check(Token::WHILE) || check(Token::RETURN)) {
+            block->statements.push_back(parseStm());
+            match(Token::SEMICOL);
+        }
+        else if (check(Token::ID)) {
+            string firstId = current->text;
+            
+            if (firstId == "int" || firstId == "float" || firstId == "char" || 
+                firstId == "bool" || firstId == "string" || firstId == "struct") {
+                block->declarations.push_back(parseDecl());
+            }
+            else if (isupper(firstId[0])) {
+                block->declarations.push_back(parseDecl());
+            }
+            else {
+                block->statements.push_back(parseStm());
+                match(Token::SEMICOL);
+            }
+        }
+        else {
             break;
         }
     }
@@ -339,13 +334,13 @@ LValueSuffix* Parser::parseLValueSuffix() {
     }
 }
 
-Exp* Parser::parseCEondExp() {
+Exp* Parser::parseTCondExp() {
     Exp* condition = parseCE();
     if (match(Token::QUESTION)) {
         Exp* trueExp = parseCE();
         match(Token::DOSPUNTOS);
         Exp* falseExp = parseCE();
-        return new CondExp(condition, trueExp, falseExp);
+        return new TCondExp(condition, trueExp, falseExp);
     }
     return condition;
 }
@@ -423,6 +418,13 @@ Exp* Parser::parseF() {
     else if (match(Token::FALSE)) {
         return new BoolExp(false);
     }
+    else if (match(Token::CHARLIT)) {
+        string charText = previous->text;
+        if (charText.length() >= 3) {
+            char c = charText[1];
+            return new CharExp(c);
+        }
+    }
     else if (match(Token::LPAREN))
     {
         e = parseCE();
@@ -444,10 +446,10 @@ ArrayLiteral* Parser::parseArrayLiteral() {
     match(Token::LLAVEL);
     ArrayLiteral* al = new ArrayLiteral();
     if (!check(Token::LLAVER)) {
-        al->elements.push_back(parseCE());
+        al->elements.push_back(parseInitializer());
         
         while (match(Token::COMA)) {
-            al->elements.push_back(parseCE());
+            al->elements.push_back(parseInitializer());
         }
     }    
     match(Token::LLAVER);
@@ -457,5 +459,9 @@ ArrayLiteral* Parser::parseArrayLiteral() {
 string Parser::parseType() {
     string type = current->text;
     advance();
+    if (type == "struct") {
+        type = type + " " + current->text;
+        advance();
+    }
     return type;
 }

@@ -52,7 +52,7 @@ int ReturnStm::accept(Visitor* visitor){
     return visitor->visit(this);
 }
 
-int CondExp::accept(Visitor* visitor) {
+int TCondExp::accept(Visitor* visitor) {
     return visitor->visit(this);
 }
 
@@ -254,7 +254,7 @@ int GenCodeVisitor::visit(FcallExp* exp) {
     return 0;
 }
 
-int GenCodeVisitor::visit(CondExp* exp) {
+int GenCodeVisitor::visit(TCondExp* exp) {
     return 0;
 }
 

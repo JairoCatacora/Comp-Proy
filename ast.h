@@ -42,14 +42,14 @@ public:
     ~BinaryExp();
 };
 
-class CondExp : public Exp {
+class TCondExp : public Exp {
 public:
     Exp* condition;
     Exp* trueExp;
     Exp* falseExp;
     int accept(Visitor* visitor);
-    CondExp(Exp* cond, Exp* tExp, Exp* fExp);
-    ~CondExp();
+    TCondExp(Exp* cond, Exp* tExp, Exp* fExp);
+    ~TCondExp();
 };
 
 // Expresión numérica

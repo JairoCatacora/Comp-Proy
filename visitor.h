@@ -32,7 +32,7 @@ public:
     virtual int visit(Body* body) = 0;
     virtual int visit(FcallExp* fcall) = 0;
     virtual int visit(ReturnStm* r) = 0;
-    virtual int visit(CondExp* exp) = 0;
+    virtual int visit(TCondExp* exp) = 0;
     virtual int visit(StringExp* exp) = 0;
     virtual int visit(CharExp* exp) = 0;
     virtual int visit(BoolExp* exp) = 0;
@@ -76,7 +76,7 @@ public:
     int visit(Body* body) override;
     int visit(FcallExp* fcall) override;
     int visit(ReturnStm* r) override;
-    int visit(CondExp* exp) override;
+    int visit(TCondExp* exp) override;
     int visit(StringExp* exp) override;
     int visit(CharExp* exp) override;
     int visit(BoolExp* exp) override;

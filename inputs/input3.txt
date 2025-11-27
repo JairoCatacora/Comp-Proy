@@ -1,27 +1,38 @@
-int findMax(int arr[], int n) {
-    int max;
-    int i;
-    max = arr[0];
-    i = 1;
-    while (i < n) {
-        if (arr[i] > max) {
-            max = arr[i];
-        } else {
-            max = max;
-        }
-        i = i + 1;
+int maximo(int a, int b) {
+    if (a > b) {
+        return a;
+    } else {
+        return b;
     }
-    return max;
+}
+
+int minimo(int a, int b) {
+    if (a < b) {
+        return a;
+    } else {
+        return b;
+    }
+}
+
+int absoluto(int n) {
+    if (n < 0) {
+        return 0 - n;
+    } else {
+        return n;
+    }
 }
 
 int main() {
-    int numbers[4];
-    int maximum;
-    numbers[0] = 15;
-    numbers[1] = 42;
-    numbers[2] = 8;
-    numbers[3] = 23;
-    maximum = findMax(numbers, 4);
-    print(maximum);
+    int a;
+    int b;
+    int max;
+    int min;
+    a = 10;
+    b = 25;
+    max = maximo(a, b);
+    min = minimo(a, b);
+    print(max);
+    print(min);
+    print(absoluto(0 - 15));
     return 0;
 }
