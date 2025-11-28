@@ -6,6 +6,7 @@ print_fmt: .asciz "%d\n"
 maximo:
  pushq %rbp
  movq %rsp, %rbp
+ subq $32, %rsp
  movq %rdi, -8(%rbp)
  movq %rsi, -16(%rbp)
  movq -8(%rbp), %rax
@@ -23,14 +24,14 @@ maximo:
  jmp .end_maximo
 endif_0:
 .end_maximo:
- movq %rbp, %rsp
- popq %rbp
+ leave
  ret
 
 .globl minimo
 minimo:
  pushq %rbp
  movq %rsp, %rbp
+ subq $32, %rsp
  movq %rdi, -8(%rbp)
  movq %rsi, -16(%rbp)
  movq -8(%rbp), %rax
@@ -52,14 +53,14 @@ minimo:
  jmp .end_minimo
 endif_1:
 .end_minimo:
- movq %rbp, %rsp
- popq %rbp
+ leave
  ret
 
 .globl absoluto
 absoluto:
  pushq %rbp
  movq %rsp, %rbp
+ subq $16, %rsp
  movq %rdi, -8(%rbp)
  movq -8(%rbp), %rax
  pushq %rax
@@ -85,14 +86,14 @@ absoluto:
  jmp .end_absoluto
 endif_2:
 .end_absoluto:
- movq %rbp, %rsp
- popq %rbp
+ leave
  ret
 
 .globl main
 main:
  pushq %rbp
  movq %rsp, %rbp
+ subq $48, %rsp
  movq $10, %rax
  pushq %rax
  popq %rax
@@ -105,6 +106,7 @@ main:
  popq %rax
  movq %rax, -24(%rbp)
 .end_main:
- movq %rbp, %rsp
- popq %rbp
+ leave
  ret
+.section note.GNU-stack,"",@progbits
+

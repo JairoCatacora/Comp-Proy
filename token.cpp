@@ -64,6 +64,9 @@ ostream& operator<<(ostream& outs, const Token& tok) {
         case Token::OR:    outs << "TOKEN(OR, \""    << tok.text << "\")"; break;
         case Token::NOT:    outs << "TOKEN(NOT, \""    << tok.text << "\")"; break;
         case Token::END:    outs << "TOKEN(END)"; break;
+        case Token::CHARLIT: outs << "TOKEN(CHARLIT, \'" << tok.text << "\')"; break;
+        case Token::HASHTAG: outs << "TOKEN(HASHTAG, \"" << tok.text << "\")"; break;
+        case Token::INCLUDE: outs << "TOKEN(INCLUDE, \"" << tok.text << "\")"; break;
     }
     return outs;
 }

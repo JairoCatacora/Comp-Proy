@@ -6,9 +6,16 @@ print_fmt: .asciz "%d\n"
 findMax:
  pushq %rbp
  movq %rsp, %rbp
+ subq $48, %rsp
  movq %rdi, -8(%rbp)
  movq %rsi, -16(%rbp)
- movq -8(%rbp), %rax
+ leaq -8(%rbp), %rax
+ pushq %rax
+ movq $0, %rax
+ imulq $8, %rax
+ popq %rcx
+ addq %rcx, %rax
+ movq (%rax), %rax
  pushq %rax
  popq %rax
  movq %rax, -24(%rbp)
@@ -28,14 +35,26 @@ while_0:
  movzbq %al, %rax
  cmpq $0, %rax
  je endwhile_0
- movq -8(%rbp), %rax
+ leaq -8(%rbp), %rax
+ pushq %rax
+ movq -32(%rbp), %rax
+ imulq $8, %rax
+ popq %rcx
+ addq %rcx, %rax
+ movq (%rax), %rax
  pushq %rax
  movq -24(%rbp), %rax
  movq %rax, %rcx
  popq %rax
  cmpq $0, %rax
  je else_1
- movq -8(%rbp), %rax
+ leaq -8(%rbp), %rax
+ pushq %rax
+ movq -32(%rbp), %rax
+ imulq $8, %rax
+ popq %rcx
+ addq %rcx, %rax
+ movq (%rax), %rax
  pushq %rax
  popq %rax
  movq %rax, -24(%rbp)
@@ -60,34 +79,59 @@ endwhile_0:
  movq -24(%rbp), %rax
  jmp .end_findMax
 .end_findMax:
- movq %rbp, %rsp
- popq %rbp
+ leave
  ret
 
 .globl main
 main:
  pushq %rbp
  movq %rsp, %rbp
+ subq $96, %rsp
  movq $15, %rax
  pushq %rax
+ leaq -8(%rbp), %rcx
+ pushq %rcx
+ movq $0, %rax
+ imulq $8, %rax
+ popq %rcx
+ addq %rax, %rcx
  popq %rax
- movq %rax, -8(%rbp)
+ movq %rax, (%rcx)
  movq $42, %rax
  pushq %rax
+ leaq -8(%rbp), %rcx
+ pushq %rcx
+ movq $1, %rax
+ imulq $8, %rax
+ popq %rcx
+ addq %rax, %rcx
  popq %rax
- movq %rax, -8(%rbp)
+ movq %rax, (%rcx)
  movq $8, %rax
  pushq %rax
+ leaq -8(%rbp), %rcx
+ pushq %rcx
+ movq $2, %rax
+ imulq $8, %rax
+ popq %rcx
+ addq %rax, %rcx
  popq %rax
- movq %rax, -8(%rbp)
+ movq %rax, (%rcx)
  movq $23, %rax
  pushq %rax
+ leaq -8(%rbp), %rcx
+ pushq %rcx
+ movq $3, %rax
+ imulq $8, %rax
+ popq %rcx
+ addq %rax, %rcx
  popq %rax
- movq %rax, -8(%rbp)
+ movq %rax, (%rcx)
  pushq %rax
  popq %rax
- movq %rax, -16(%rbp)
+ movq %rax, -88(%rbp)
 .end_main:
- movq %rbp, %rsp
- popq %rbp
+ leave
  ret
+.section note.GNU-stack,"",@progbits
+

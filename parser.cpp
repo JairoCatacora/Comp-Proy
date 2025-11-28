@@ -168,6 +168,9 @@ Stm* Parser::parseStm() {
         match(Token::LLAVER);
         a = new WhileStm(e, body);
     }
+    else if (check(Token::HASHTAG)) {
+        a = parseLibreria();
+    }
     else{
         throw runtime_error("Error sintáctico");
     }
@@ -283,27 +286,36 @@ Block* Parser::parseFuncBody() {
 Block* Parser::parseBlock() {
     Block* block = new Block();
     while (!check(Token::LLAVER) && !isAtEnd()) {
+        bool isDecl = false;
+        if (check(Token::STRUCT)) {
+            isDecl = true;
+        } else if (check(Token::ID)) {
+            string firstId = current->text;
+
+            if (firstId == "int" || firstId == "float" || firstId == "char" || 
+                firstId == "bool" || firstId == "string") {
+                isDecl = true;
+            } else if (isupper(firstId[0])) {
+                isDecl = true;
+            }
+        }
+        if (isDecl) {
+            block->declarations.push_back(parseDecl());
+        } else {
+            break;
+        }
+    }
+    
+    while (!check(Token::LLAVER) && !isAtEnd()) {
+        bool isStmt = false;    
         if (check(Token::PRINT) || check(Token::IF) || 
-            check(Token::WHILE) || check(Token::RETURN)) {
+            check(Token::WHILE) || check(Token::RETURN) || check(Token::ID)) {
+            isStmt = true;
+        }
+        if (isStmt) {
             block->statements.push_back(parseStm());
             match(Token::SEMICOL);
-        }
-        else if (check(Token::ID)) {
-            string firstId = current->text;
-            
-            if (firstId == "int" || firstId == "float" || firstId == "char" || 
-                firstId == "bool" || firstId == "string" || firstId == "struct") {
-                block->declarations.push_back(parseDecl());
-            }
-            else if (isupper(firstId[0])) {
-                block->declarations.push_back(parseDecl());
-            }
-            else {
-                block->statements.push_back(parseStm());
-                match(Token::SEMICOL);
-            }
-        }
-        else {
+        } else {
             break;
         }
     }
@@ -464,4 +476,15 @@ string Parser::parseType() {
         advance();
     }
     return type;
+}
+
+Libreria* Parser::parseLibreria() {
+    Libreria* lib = new Libreria();
+    match(Token::HASHTAG);
+    match(Token::INCLUDE);
+    match(Token::LE);
+    match(Token::ID);
+    lib->nombre = previous->text;
+    match(Token::GT);
+    return lib;    
 }

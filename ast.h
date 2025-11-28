@@ -320,5 +320,12 @@ public:
     int accept(Visitor* visitor);
 };
 
+class Libreria : public Stm {
+public:
+    string nombre;
+    Libreria();
+    ~Libreria();
+    int accept(Visitor* visitor);
+};
 
 #endif // AST_H

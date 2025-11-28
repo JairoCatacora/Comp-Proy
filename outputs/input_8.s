@@ -6,6 +6,7 @@ print_fmt: .asciz "%d\n"
 average:
  pushq %rbp
  movq %rsp, %rbp
+ subq $48, %rsp
  movq %rdi, -8(%rbp)
  movq %rsi, -16(%rbp)
  movq $0, %rax
@@ -30,7 +31,13 @@ while_0:
  je endwhile_0
  movq -24(%rbp), %rax
  pushq %rax
- movq -8(%rbp), %rax
+ leaq -8(%rbp), %rax
+ pushq %rax
+ movq -32(%rbp), %rax
+ imulq $8, %rax
+ popq %rcx
+ addq %rcx, %rax
+ movq (%rax), %rax
  movq %rax, %rcx
  popq %rax
  addq %rcx, %rax
@@ -51,15 +58,58 @@ endwhile_0:
  movq -24(%rbp), %rax
  jmp .end_average
 .end_average:
- movq %rbp, %rsp
- popq %rbp
+ leave
  ret
 
 .globl main
 main:
  pushq %rbp
  movq %rsp, %rbp
+ subq $112, %rsp
+ movq $101, %rax
+ pushq %rax
+ leaq -8(%rbp), %rcx
+ addq $8, %rcx
+ popq %rax
+ movq %rax, (%rcx)
+ movq $85, %rax
+ pushq %rax
+ leaq -8(%rbp), %rcx
+ addq $8, %rcx
+ pushq %rcx
+ movq $0, %rax
+ imulq $8, %rax
+ popq %rcx
+ addq %rax, %rcx
+ popq %rax
+ movq %rax, (%rcx)
+ movq $90, %rax
+ pushq %rax
+ leaq -8(%rbp), %rcx
+ addq $8, %rcx
+ pushq %rcx
+ movq $1, %rax
+ imulq $8, %rax
+ popq %rcx
+ addq %rax, %rcx
+ popq %rax
+ movq %rax, (%rcx)
+ movq $78, %rax
+ pushq %rax
+ leaq -8(%rbp), %rcx
+ addq $8, %rcx
+ pushq %rcx
+ movq $2, %rax
+ imulq $8, %rax
+ popq %rcx
+ addq %rax, %rcx
+ popq %rax
+ movq %rax, (%rcx)
+ pushq %rax
+ popq %rax
+ movq %rax, -24(%rbp)
 .end_main:
- movq %rbp, %rsp
- popq %rbp
+ leave
  ret
+.section note.GNU-stack,"",@progbits
+

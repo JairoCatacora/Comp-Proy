@@ -6,6 +6,7 @@ print_fmt: .asciz "%d\n"
 main:
  pushq %rbp
  movq %rsp, %rbp
+ subq $32, %rsp
  movq $10, %rax
  pushq %rax
  popq %rax
@@ -21,6 +22,7 @@ main:
  movq $0, %rax
  jmp .end_main
 .end_main:
- movq %rbp, %rsp
- popq %rbp
+ leave
  ret
+.section note.GNU-stack,"",@progbits
+

@@ -42,6 +42,7 @@ public:
     Exp* parseF();
     ArrayLiteral* parseArrayLiteral();
     string parseType();
+    Libreria* parseLibreria();
 };
 
 #endif // PARSER_H      

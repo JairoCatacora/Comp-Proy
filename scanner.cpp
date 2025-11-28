@@ -69,6 +69,7 @@ Token* Scanner::nextToken() {
         else if (lexema=="and") return new Token(Token::AND, input, first, current - first);
         else if (lexema=="or") return new Token(Token::OR, input, first, current - first);
         else if (lexema=="not") return new Token(Token::NOT, input, first, current - first);
+        else if (lexema=="include") return new Token(Token::INCLUDE, input, first, current - first);
         else return new Token(Token::ID, input, first, current - first);
     }
     else if (c == '\'') {
@@ -82,7 +83,7 @@ Token* Scanner::nextToken() {
         }
         token = new Token(Token::CHARLIT, input, first, current - first);
     }
-    else if (strchr("+/-*();=<>,{}[].?!:\'", c)) {
+    else if (strchr("+/-*();=<>,{}[].?!:\'#", c)) {
         switch (c) {
             case '<': token = new Token(Token::LE,  c); break;
             case '+': token = new Token(Token::PLUS,  c); break;
@@ -126,6 +127,7 @@ Token* Scanner::nextToken() {
                     token = new Token(Token::NOT,c);
                 }
                 break;
+            case '#': token = new Token(Token::HASHTAG,c); break;
         }
         current++;
     }

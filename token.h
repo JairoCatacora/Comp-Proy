@@ -50,7 +50,9 @@ public:
         AND,
         OR,
         NOT,
-        CHARLIT
+        CHARLIT,
+        HASHTAG,
+        INCLUDE
     };
 
     // Atributos

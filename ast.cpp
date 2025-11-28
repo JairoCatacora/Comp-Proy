@@ -136,3 +136,6 @@ Dec::Dec(Decl* d)
 Dec::Dec(Stm* s) 
     : type(STMT), structDec(nullptr), funDec(nullptr), decl(nullptr), stmt(s) {}
 Dec::~Dec() {}
+
+Libreria::Libreria() : nombre("") {}
+Libreria::~Libreria() {}

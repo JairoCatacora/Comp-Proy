@@ -6,6 +6,7 @@ print_fmt: .asciz "%d\n"
 esPar:
  pushq %rbp
  movq %rsp, %rbp
+ subq $32, %rsp
  movq %rdi, -8(%rbp)
  movq -8(%rbp), %rax
  pushq %rax
@@ -44,14 +45,14 @@ esPar:
  jmp .end_esPar
 endif_0:
 .end_esPar:
- movq %rbp, %rsp
- popq %rbp
+ leave
  ret
 
 .globl potencia
 potencia:
  pushq %rbp
  movq %rsp, %rbp
+ subq $48, %rsp
  movq %rdi, -8(%rbp)
  movq %rsi, -16(%rbp)
  movq $1, %rax
@@ -97,14 +98,14 @@ endwhile_1:
  movq -24(%rbp), %rax
  jmp .end_potencia
 .end_potencia:
- movq %rbp, %rsp
- popq %rbp
+ leave
  ret
 
 .globl main
 main:
  pushq %rbp
  movq %rsp, %rbp
+ subq $32, %rsp
  movq $4, %rax
  pushq %rax
  popq %rax
@@ -115,6 +116,7 @@ main:
  else_2:
 endif_2:
 .end_main:
- movq %rbp, %rsp
- popq %rbp
+ leave
  ret
+.section note.GNU-stack,"",@progbits
+

@@ -5,6 +5,8 @@
 #include <vector>
 #include <unordered_map>
 #include <string>
+#include "environment.h"
+
 using namespace std;
 
 class BinaryExp;
@@ -50,6 +52,7 @@ public:
     virtual int visit(StructDec* sdec) = 0;
     virtual int visit(Block* b) = 0;
     virtual int visit(Dec* d) = 0;
+    virtual int visit(Libreria* l) = 0;
 };
 
 
@@ -57,10 +60,12 @@ class GenCodeVisitor : public Visitor {
 private:
     std::ostream& out;
 public:
+    unordered_map<string, int> reserva_memoria;
     GenCodeVisitor(std::ostream& out) : out(out) {}
     int generar(Program* program);
-    unordered_map<string, int> memoria;
+    Environment<int> memoria;
     unordered_map<string, bool> memoriaGlobal;
+    unordered_map<string, unordered_map<string, int>> struct_campos;
     int offset = -8;
     int labelcont = 0;
     bool entornoFuncion = false;
@@ -94,6 +99,7 @@ public:
     int visit(StructDec* sdec) override;
     int visit(Block* b) override;
     int visit(Dec* d) override;
+    int visit(Libreria* l) override;
 };
 
 #endif // VISITOR_H
