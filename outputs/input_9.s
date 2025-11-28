@@ -23,6 +23,11 @@ main:
  movq %rax, -8(%rbp)
  movq $5, %rax
  movq %rax, -16(%rbp)
+ movq -8(%rbp), %rax
+ movq %rax, %rdi
+ movq -16(%rbp), %rax
+ movq %rax, %rsi
+ call Comparar
  movq %rax, %rsi
  leaq print_fmt(%rip), %rdi
  movl $0, %eax

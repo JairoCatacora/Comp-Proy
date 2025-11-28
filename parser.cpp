@@ -113,14 +113,22 @@ Dec* Parser::parseDec() {
         check(Token::WHILE) || check(Token::RETURN)) {
         return new Dec(parseStm());
     }
+    if (check(Token::HASHTAG)) {
+        parseLibreria();
+        return nullptr;
+    }
+    return nullptr;
 }
 
 Body* Parser::parseBody(){
     Body* b = new Body();
-    while (!isAtEnd() && (check(Token::STRUCT) || check(Token::ID) || 
+    while (!isAtEnd() && (check(Token::HASHTAG) || check(Token::STRUCT) || check(Token::ID) || 
            check(Token::PRINT) || check(Token::IF) || check(Token::WHILE) || 
            check(Token::RETURN))) {
-        b->decList.push_back(parseDec());
+        Dec* dec = parseDec();
+        if (dec != nullptr) {
+            b->decList.push_back(dec);
+        }
     }
     return b;
 }
@@ -132,12 +140,14 @@ Stm* Parser::parseStm() {
         LValue* lv = parseLValue();
         match(Token::ASSIGN);
         e = parseTCondExp();
+        match(Token::SEMICOL);
         return new AssignStm(lv, e);
     }
     else if(match(Token::PRINT)){
         match(Token::LPAREN);
         e = parseTCondExp();
         match(Token::RPAREN);
+        match(Token::SEMICOL);
         return new PrintStm(e);
     }
     else if(match(Token::RETURN)) {
@@ -167,9 +177,6 @@ Stm* Parser::parseStm() {
         Block* body = parseBlock();
         match(Token::LLAVER);
         a = new WhileStm(e, body);
-    }
-    else if (check(Token::HASHTAG)) {
-        a = parseLibreria();
     }
     else{
         throw runtime_error("Error sintáctico");
@@ -314,7 +321,6 @@ Block* Parser::parseBlock() {
         }
         if (isStmt) {
             block->statements.push_back(parseStm());
-            match(Token::SEMICOL);
         } else {
             break;
         }
@@ -359,13 +365,17 @@ Exp* Parser::parseTCondExp() {
 
 Exp* Parser::parseCE() {
     Exp* l = parseBE();
-    if (match(Token::LE) || match(Token::GT)) {
+    if (match(Token::LE) || match(Token::GT) || match(Token::EQUAL) || match(Token::NEQUAL)) {
         BinaryOp op;
         if (previous->type == Token::LE){
             op = LE_OP;
         }
-        else{
+        else if (previous->type == Token::GT) {
             op = GT_OP;
+        } else if (previous->type == Token::EQUAL) {
+            op = EQUAL_OP;
+        } else if (previous->type == Token::NEQUAL) {
+            op = NEQUAL_OP;
         }
         Exp* r = parseBE();
         l = new BinaryExp(l, r, op);
@@ -444,7 +454,27 @@ Exp* Parser::parseF() {
         return e;
     }
     else if (check(Token::ID)) {
-        return parseLValue();
+        string id = current->text;
+        advance();
+        if (check(Token::LPAREN)) {
+            match(Token::LPAREN);
+            FcallExp* fcall = new FcallExp();
+            fcall->nombre = id;
+            if (!check(Token::RPAREN)) {
+                fcall->argumentos.push_back(parseTCondExp());
+                while (match(Token::COMA)) {
+                    fcall->argumentos.push_back(parseTCondExp());
+                }
+            }
+            match(Token::RPAREN);
+            return fcall;
+        } else {
+            LValue* lv = new LValue(id);
+            while (check(Token::PUNTO) || check(Token::CORL)) {
+                lv->suffixes.push_back(parseLValueSuffix());
+            }
+            return lv;
+        }
     }
     else if (check(Token::LLAVEL)) {
         return parseArrayLiteral();
@@ -483,8 +513,18 @@ Libreria* Parser::parseLibreria() {
     match(Token::HASHTAG);
     match(Token::INCLUDE);
     match(Token::LE);
-    match(Token::ID);
-    lib->nombre = previous->text;
+    string libName = "";
+    if (check(Token::ID)) {
+        libName = current->text;
+        advance();
+    }
+    if (match(Token::PUNTO)) {
+        if (check(Token::ID)) {
+            libName += "." + current->text;
+            advance();
+        }
+    }
+    lib->nombre = libName;
     match(Token::GT);
     return lib;    
 }

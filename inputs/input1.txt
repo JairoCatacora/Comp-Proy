@@ -3,10 +3,15 @@ int suma(int a,int b) {
 }
 
 int factorial(int n) {
-    if (n == 0) {
-        return 1;
+    int resultado;
+    int i;
+    resultado = 1;
+    i = 0;
+    while (i < n) {
+        i = i + 1;
+        resultado = resultado * i;
     }
-    return n * factorial(n - 1);
+    return resultado;
 }
 
 int main() {

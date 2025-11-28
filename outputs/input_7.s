@@ -78,9 +78,39 @@ main:
  addq %rax, %rcx
  popq %rax
  movq %rax, (%rcx)
+ movq -8(%rbp), %rax
+ movq %rax, %rdi
+ call getAge
  pushq %rax
  popq %rax
  movq %rax, -24(%rbp)
+ movq -24(%rbp), %rax
+ movq %rax, %rsi
+ leaq print_fmt(%rip), %rdi
+ movl $0, %eax
+ call printf@PLT
+ leaq -8(%rbp), %rax
+ addq $8, %rax
+ movq (%rax), %rax
+ pushq %rax
+ movq $1, %rax
+ movq %rax, %rcx
+ popq %rax
+ addq %rcx, %rax
+ pushq %rax
+ leaq -8(%rbp), %rcx
+ addq $8, %rcx
+ popq %rax
+ movq %rax, (%rcx)
+ leaq -8(%rbp), %rax
+ addq $8, %rax
+ movq (%rax), %rax
+ movq %rax, %rsi
+ leaq print_fmt(%rip), %rdi
+ movl $0, %eax
+ call printf@PLT
+ movq $0, %rax
+ jmp .end_main
 .end_main:
  leave
  ret

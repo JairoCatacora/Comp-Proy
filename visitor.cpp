@@ -180,6 +180,28 @@ int GenCodeVisitor::visit(BinaryExp* exp) {
                       << " setle %al\n"
                       << " movzbq %al, %rax\n";
             break;
+        case DIV_OP:
+            out << " cqto\n"
+                << " idivq %rcx\n";
+            break;
+        case GT_OP:
+            out << " cmpq %rcx, %rax\n"
+                << " movl $0, %eax\n"
+                << " setg %al\n"
+                << " movzbq %al, %rax\n";
+            break;
+        case EQUAL_OP:
+            out << " cmpq %rcx, %rax\n"
+                << " movl $0, %eax\n"
+                << " sete %al\n"
+                << " movzbq %al, %rax\n";
+            break;
+        case NEQUAL_OP:
+            out << " cmpq %rcx, %rax\n"
+                << " movl $0, %eax\n"
+                << " setne %al\n"
+                << " movzbq %al, %rax\n";
+            break;
     }
     return 0;
 }
@@ -280,9 +302,9 @@ int GenCodeVisitor::visit(FcallExp* exp) {
     int size = exp->argumentos.size();
     for (int i = 0; i < size; i++) {
         exp->argumentos[i]->accept(this);
-        out << " mov %rax, " << argRegs[i] <<endl;
+        out << " movq %rax, " << argRegs[i] <<endl;
     }
-    out << "call " << exp->nombre << endl;
+    out << " call " << exp->nombre << endl;
     return 0;
 }
 

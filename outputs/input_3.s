@@ -14,6 +14,10 @@ maximo:
  movq -16(%rbp), %rax
  movq %rax, %rcx
  popq %rax
+ cmpq %rcx, %rax
+ movl $0, %eax
+ setg %al
+ movzbq %al, %rax
  cmpq $0, %rax
  je else_0
  movq -8(%rbp), %rax
@@ -102,9 +106,46 @@ main:
  pushq %rax
  popq %rax
  movq %rax, -16(%rbp)
+ movq -8(%rbp), %rax
+ movq %rax, %rdi
+ movq -16(%rbp), %rax
+ movq %rax, %rsi
+ call maximo
  pushq %rax
  popq %rax
  movq %rax, -24(%rbp)
+ movq -8(%rbp), %rax
+ movq %rax, %rdi
+ movq -16(%rbp), %rax
+ movq %rax, %rsi
+ call minimo
+ pushq %rax
+ popq %rax
+ movq %rax, -32(%rbp)
+ movq -24(%rbp), %rax
+ movq %rax, %rsi
+ leaq print_fmt(%rip), %rdi
+ movl $0, %eax
+ call printf@PLT
+ movq -32(%rbp), %rax
+ movq %rax, %rsi
+ leaq print_fmt(%rip), %rdi
+ movl $0, %eax
+ call printf@PLT
+ movq $0, %rax
+ pushq %rax
+ movq $15, %rax
+ movq %rax, %rcx
+ popq %rax
+ subq %rcx, %rax
+ movq %rax, %rdi
+ call absoluto
+ movq %rax, %rsi
+ leaq print_fmt(%rip), %rdi
+ movl $0, %eax
+ call printf@PLT
+ movq $0, %rax
+ jmp .end_main
 .end_main:
  leave
  ret

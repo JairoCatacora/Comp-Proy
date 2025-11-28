@@ -46,6 +46,10 @@ while_0:
  movq -24(%rbp), %rax
  movq %rax, %rcx
  popq %rax
+ cmpq %rcx, %rax
+ movl $0, %eax
+ setg %al
+ movzbq %al, %rax
  cmpq $0, %rax
  je else_1
  leaq -8(%rbp), %rax
@@ -127,9 +131,21 @@ main:
  addq %rax, %rcx
  popq %rax
  movq %rax, (%rcx)
+ movq -8(%rbp), %rax
+ movq %rax, %rdi
+ movq $4, %rax
+ movq %rax, %rsi
+ call findMax
  pushq %rax
  popq %rax
  movq %rax, -88(%rbp)
+ movq -88(%rbp), %rax
+ movq %rax, %rsi
+ leaq print_fmt(%rip), %rdi
+ movl $0, %eax
+ call printf@PLT
+ movq $0, %rax
+ jmp .end_main
 .end_main:
  leave
  ret
